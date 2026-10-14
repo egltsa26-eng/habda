@@ -369,7 +369,7 @@ input:focus,textarea:focus{outline:none;border-color:var(--purple);box-shadow:0 
 
 <script id="game-flags">
 window.HABDA_FLAGS = {"target":"web","net":true,"webUrl":"https://egltsa26-eng.github.io/habda/","appStoreUrl":""};
-window.HABDA_FIREBASE = null;
+window.HABDA_FIREBASE = {"apiKey":"AIzaSyBhjvTXkWJliTwbIwmA1zWY_-4pBTL3Pik","authDomain":"habda-d9249.firebaseapp.com","databaseURL":"https://habda-d9249-default-rtdb.europe-west1.firebasedatabase.app","projectId":"habda-d9249","storageBucket":"habda-d9249.firebasestorage.app","messagingSenderId":"1055803544428","appId":"1:1055803544428:web:4b63d2eb6494ac30975949"};
 </script>
 
 <script id="game-net">
@@ -444,7 +444,9 @@ const HabdaNet = (() => {
       update: (p, obj) => F.update(r(p), obj),
       remove: p => F.remove(r(p)),
       on(p, cb) { return F.onValue(r(p), s => cb(s.val()), () => cb(null)); },
-      onDisconnect: (p, v) => v == null ? F.onDisconnect(r(p)).remove() : F.onDisconnect(r(p)).set(v)
+      onDisconnect: (p, v) => v == null ? F.onDisconnect(r(p)).remove() : F.onDisconnect(r(p)).set(v),
+      /* fires on every reconnect, so a phone that dropped off marks itself back online */
+      onConnected: cb => F.onValue(F.ref(db, '.info/connected'), s => cb(!!s.val()))
     };
   }
 
