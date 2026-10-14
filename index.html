@@ -430,7 +430,9 @@ const HabdaNet = (() => {
     const F = window.HabdaVendor && window.HabdaVendor.firebase;
     if (!F || !config || !config.apiKey || !config.databaseURL) throw new Error('no-config');
     const app = F.initializeApp(config);
-    const auth = F.initializeAuth(app, { persistence: [F.indexedDBLocalPersistence, F.browserLocalPersistence] });
+    /* #testtab: each browser tab signs in as its own player, so one computer can test a room with several tabs. */
+    const perTab = /testtab/.test(location.hash);
+    const auth = F.initializeAuth(app, { persistence: perTab ? [F.browserSessionPersistence] : [F.indexedDBLocalPersistence, F.browserLocalPersistence] });
     const user = auth.currentUser || (await F.signInAnonymously(auth)).user;
     const db = F.getDatabase(app);
     let offset = 0;
@@ -2705,7 +2707,7 @@ const Rules = (() => {
 
   try { const m = /[?&#]r=(\d{5})/.exec(location.search + location.hash); if (m) RM.joinCode = m[1]; } catch (e) {}
   /* With the local test driver every tab is a separate phone, so each tab keeps its own room memory. */
-  const mem = (() => { try { return /localnet/.test(location.hash) ? sessionStorage : localStorage; } catch (e) { return null; } })();
+  const mem = (() => { try { return /localnet|testtab/.test(location.hash) ? sessionStorage : localStorage; } catch (e) { return null; } })();
   const lsGet = k => { try { return JSON.parse(mem.getItem(k) || 'null'); } catch (e) { return null; } };
   const lsSet = (k, v) => { try { if (v == null) mem.removeItem(k); else mem.setItem(k, JSON.stringify(v)); } catch (e) {} };
   try { RM.name = mem.getItem(NAME_KEY) || ''; } catch (e) {}
