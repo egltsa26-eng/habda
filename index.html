@@ -3456,7 +3456,7 @@ const Rules = (() => {
       plusBusy = id; render();
       st.buy({ id }).then(r => {
         plusBusy = '';
-        if (r && r.state === 'done') { setOwned(r.owned); S.sheet = 'plus'; sfx('win'); vibe('good'); toast('مبروك! هبدة بلس صار عندكم'); stat('buy_' + Object.keys(PLUS_IDS).find(k => PLUS_IDS[k] === id)); }
+        if (r && r.state === 'done') { setOwned(r.owned); S.sheet = 'plus'; sfx('win'); vibe('good'); toast('مبروك! هبدة بلس صار عندكم'); }
         else if (r && r.state === 'pending') toast('الطلب ينتظر موافقة، وبيوصلكم أول ما يتأكد');
         render();
       }, e => { plusBusy = ''; toast('ما تم الشراء. جرّبوا مرة ثانية'); render(); });
